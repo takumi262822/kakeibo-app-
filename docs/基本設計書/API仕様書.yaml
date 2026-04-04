@@ -1,0 +1,89 @@
+openapi: 3.0.3
+info:
+  title: MONEYBOOK（家計簿アプリ）データ仕様
+  description: |-
+    MONEYBOOK はブラウザ上で動作する家計簿アプリです。
+    外部 REST API は持たず、収支レコードと予算データを localStorage で管理します。
+    データの読み書きは StorageManager クラス経由で一元管理します。
+  version: 1.0.0
+  contact:
+    name: Takumi Harada
+
+servers: []
+
+paths: {}
+
+components:
+  schemas:
+
+    Record:
+      type: object
+      description: 収支レコード1件分のデータ
+      required: [id, date, type, category, amount]
+      properties:
+        id:
+          type: string
+          description: レコードID（タイムスタンプベース）
+          example: "rec-1711234567890"
+        date:
+          type: string
+          format: date
+          description: 日付（YYYY-MM-DD形式）
+          example: "2026-04-01"
+        type:
+          type: string
+          description: 収支種別
+          enum: [income, expense]
+        category:
+          type: string
+          description: カテゴリ
+          example: "食費"
+        amount:
+          type: integer
+          description: 金額（円）。正の整数。
+          minimum: 1
+        memo:
+          type: string
+          description: メモ（任意）
+          maxLength: 100
+
+    BudgetMap:
+      type: object
+      description: 予算設定データ。キーはカテゴリ名、値は予算金額（円）。
+      additionalProperties:
+        type: integer
+        minimum: 0
+      example:
+        食費: 30000
+        交通費: 10000
+        娯楽: 5000
+
+x-categories:
+  income:
+    - 給与
+    - ボーナス
+    - 副収入
+    - 投資
+    - その他収入
+  expense:
+    - 食費
+    - 交通費
+    - 光熱費
+    - 通信費
+    - 娯楽
+    - 医療
+    - 衣類
+    - 日用品
+    - その他支出
+
+x-storage-keys:
+  moneybook_records:
+    description: "収支レコード一覧を保持する localStorage キー"
+    type: "JSON文字列（Record[]）"
+    set-by: "src/utils/storage.js の StorageManager.saveRecords()"
+    read-by: "src/utils/storage.js の StorageManager.getRecords()"
+  moneybook_budgets:
+    description: "予算設定データを保持する localStorage キー"
+    type: "JSON文字列（BudgetMap）"
+    set-by: "src/utils/storage.js の StorageManager.saveBudgets()"
+    read-by: "src/utils/storage.js の StorageManager.getBudgets()"

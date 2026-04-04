@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MoneyBook</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <div id="app">
+
+    <header id="site-header"></header>
+
+    <main id="main-content">
+
+      <section class="summary-section" aria-label="月次サマリー">
+        <div class="summary-card income-card">
+          <span class="card-label">収入</span>
+          <span class="card-amount" id="total-income">¥0</span>
+        </div>
+        <div class="summary-card expense-card">
+          <span class="card-label">支出</span>
+          <span class="card-amount" id="total-expense">¥0</span>
+        </div>
+        <div class="summary-card balance-card">
+          <span class="card-label">残高</span>
+          <span class="card-amount" id="total-balance">¥0</span>
+        </div>
+      </section>
+
+      <section class="chart-section" aria-label="支出内訳">
+        <h2 class="section-title">支出内訳</h2>
+        <div class="chart-wrapper">
+          <canvas id="expense-chart"></canvas>
+          <p id="chart-empty" class="chart-empty" hidden>支出データがありません</p>
+        </div>
+      </section>
+
+      <section class="records-section" aria-label="収支一覧">
+        <div class="records-header">
+          <h2 class="section-title">収支一覧</h2>
+          <button id="csv-export-btn" class="btn-secondary">CSV出力</button>
+        </div>
+        <div id="records-list" class="records-list">
+          <p class="empty-message" id="records-empty">記録がありません</p>
+        </div>
+      </section>
+
+    </main>
+
+    <button id="add-btn" class="fab-btn" aria-label="記録を追加">＋</button>
+
+    <footer id="site-footer"></footer>
+  </div>
+
+  <!-- 記録追加/編集モーダル -->
+  <div id="record-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" hidden>
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+      <h2 class="modal-title" id="modal-title">記録を追加</h2>
+      <form id="record-form" novalidate>
+
+        <div class="form-group">
+          <label for="record-date">日付</label>
+          <input type="date" id="record-date" name="date" required>
+        </div>
+
+        <div class="form-group">
+          <label>種別</label>
+          <div class="type-selector">
+            <label class="type-option">
+              <input type="radio" name="type" value="expense" checked> 支出
+            </label>
+            <label class="type-option">
+              <input type="radio" name="type" value="income"> 収入
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="record-category">カテゴリ</label>
+          <select id="record-category" name="category" required></select>
+        </div>
+
+        <div class="form-group">
+          <label for="record-amount">金額（円）</label>
+          <input type="number" id="record-amount" name="amount" min="1" step="1" placeholder="1000" required>
+        </div>
+
+        <div class="form-group">
+          <label for="record-memo">メモ</label>
+          <input type="text" id="record-memo" name="memo" maxlength="100" placeholder="（任意）">
+        </div>
+
+        <p class="form-error" id="form-error" hidden></p>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-danger" id="delete-btn" hidden>削除</button>
+          <button type="button" class="btn-secondary" id="cancel-btn">キャンセル</button>
+          <button type="submit" class="btn-primary" id="submit-btn">追加</button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
