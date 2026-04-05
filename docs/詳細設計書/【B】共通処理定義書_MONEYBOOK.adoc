@@ -20,6 +20,7 @@
 
 ^.^|{counter:変更履歴} |1.00 |Takumi Harada |2026/3/31 ^.^|- |新規作成
 ^.^|{counter:変更履歴} |1.01 |Takumi Harada |2026/4/5 <.^|全体 <.^|ファイル名変更・書式統一（格納先・説明・変更履歴）
+^.^|{counter:変更履歴} |1.02 |Takumi Harada |2026/4/5 <.^|全体 <.^|引数と戻り値を入力項目・出力項目の表に分割
 |===
 
 == 概要
@@ -47,12 +48,20 @@ DOM への文字列反映前に HTML 特殊文字をエスケープし、XSS 攻
 export function escapeHtml(str)
 ----
 
+.入力項目
 [cols="2,2,4", options="header"]
 |===
-^.^|項目 ^.^|型 <.^|内容
+^.^|引数 ^.^|型 <.^|内容
 
-<.^|引数 `str` |any |任意の値。非文字列の場合は空文字を返す。
-<.^|戻り値 |string |HTML 特殊文字をエンティティに置換した文字列
+<.^|`str` |any |任意の値。非文字列の場合は空文字を返す。
+|===
+
+.出力項目
+[cols="2,4", options="header"]
+|===
+^.^|型 <.^|内容
+
+|string |HTML 特殊文字をエンティティに置換した文字列
 |===
 
 .変換表
@@ -90,15 +99,23 @@ export function escapeHtml(str)
 export function validateRecord({ date, type, category, amount })
 ----
 
+.入力項目
 [cols="2,2,4", options="header"]
 |===
-^.^|項目 ^.^|型 <.^|内容
+^.^|引数 ^.^|型 <.^|内容
 
-<.^|引数 `date` |string |日付文字列。`YYYY-MM-DD` 形式であること
-<.^|引数 `type` |string |種別。`RECORD_TYPES` 定数の値（`income` / `expense`）であること
-<.^|引数 `category` |string |カテゴリ。`INCOME_CATEGORIES` または `EXPENSE_CATEGORIES` に含まれること
-<.^|引数 `amount` |number\|string |金額。正の整数であること
-<.^|戻り値 |string[] |エラーコード文字列の配列。全て正常な場合は空配列
+<.^|`date` |string |日付文字列。`YYYY-MM-DD` 形式であること
+<.^|`type` |string |種別。`RECORD_TYPES` 定数の値（`income` / `expense`）であること
+<.^|`category` |string |カテゴリ。`INCOME_CATEGORIES` または `EXPENSE_CATEGORIES` に含まれること
+<.^|`amount` |number\|string |金額。正の整数であること
+|===
+
+.出力項目
+[cols="2,4", options="header"]
+|===
+^.^|型 <.^|内容
+
+|string[] |エラーコード文字列の配列。全て正常な場合は空配列
 |===
 
 .検証ルール
@@ -132,13 +149,21 @@ export function validateRecord({ date, type, category, amount })
 export function validateBudget({ category, limit })
 ----
 
+.入力項目
 [cols="2,2,4", options="header"]
 |===
-^.^|項目 ^.^|型 <.^|内容
+^.^|引数 ^.^|型 <.^|内容
 
-<.^|引数 `category` |string |カテゴリ。全カテゴリ（収入+支出）に含まれること
-<.^|引数 `limit` |number\|string |予算上限金額。0 以上の整数であること
-<.^|戻り値 |string[] |エラーコード文字列の配列。全て正常な場合は空配列
+<.^|`category` |string |カテゴリ。全カテゴリ（収入+支出）に含まれること
+<.^|`limit` |number\|string |予算上限金額。0 以上の整数であること
+|===
+
+.出力項目
+[cols="2,4", options="header"]
+|===
+^.^|型 <.^|内容
+
+|string[] |エラーコード文字列の配列。全て正常な場合は空配列
 |===
 
 .検証ルール
