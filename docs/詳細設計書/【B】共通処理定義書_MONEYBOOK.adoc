@@ -21,6 +21,7 @@
 ^.^|{counter:変更履歴} |1.00 |Takumi Harada |2026/3/31 ^.^|- |新規作成
 ^.^|{counter:変更履歴} |1.01 |Takumi Harada |2026/4/5 <.^|全体 <.^|ファイル名変更・書式統一（格納先・説明・変更履歴）
 ^.^|{counter:変更履歴} |1.02 |Takumi Harada |2026/4/5 <.^|全体 <.^|引数と戻り値を入力項目・出力項目の表に分割
+^.^|{counter:変更履歴} |1.03 |Takumi Harada |2026/4/5 <.^|全体 <.^|出力項目テーブルに「戻り値」列を追加
 |===
 
 == 概要
@@ -57,11 +58,11 @@ export function escapeHtml(str)
 |===
 
 .出力項目
-[cols="2,4", options="header"]
+[cols="2,2,4", options="header"]
 |===
-^.^|型 <.^|内容
+^.^|戻り値 ^.^|型 <.^|内容
 
-|string |HTML 特殊文字をエンティティに置換した文字列
+<.^|戻り値 |string |HTML 特殊文字をエンティティに置換した文字列
 |===
 
 .変換表
@@ -111,11 +112,11 @@ export function validateRecord({ date, type, category, amount })
 |===
 
 .出力項目
-[cols="2,4", options="header"]
+[cols="2,2,4", options="header"]
 |===
-^.^|型 <.^|内容
+^.^|戻り値 ^.^|型 <.^|内容
 
-|string[] |エラーコード文字列の配列。全て正常な場合は空配列
+<.^|戻り値 |string[] |エラーコード文字列の配列。全て正常な場合は空配列
 |===
 
 .検証ルール
@@ -159,11 +160,11 @@ export function validateBudget({ category, limit })
 |===
 
 .出力項目
-[cols="2,4", options="header"]
+[cols="2,2,4", options="header"]
 |===
-^.^|型 <.^|内容
+^.^|戻り値 ^.^|型 <.^|内容
 
-|string[] |エラーコード文字列の配列。全て正常な場合は空配列
+<.^|戻り値 |string[] |エラーコード文字列の配列。全て正常な場合は空配列
 |===
 
 .検証ルール
