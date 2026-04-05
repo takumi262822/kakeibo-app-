@@ -1,0 +1,183 @@
+= MONEYBOOK（家計簿アプリ）: 共通処理定義書
+:lang: ja
+:doctype: book
+:toc: left
+:toclevels: 5
+:toc-title: 目次
+:sectnums:
+:sectnumlevels: 5
+:sectlinks:
+:imagesdir: ./images
+:icons: font
+:source-highlighter: coderay
+:example-caption: 例
+:table-caption: 表
+:figure-caption: 図
+
+[#変更履歴, title="変更履歴", cols="1,2,3,3,3,3", options="header", align="center"]
+|===
+^.^|No. ^.^|版数 ^.^|変更者 <.^|作成日/変更日 <.^|変更箇所 <.^|変更内容
+
+^.^|{counter:変更履歴} |1.00 |Takumi Harada |2026/3/31 ^.^|- |新規作成
+^.^|{counter:変更履歴} |1.01 |Takumi Harada |2026/4/5 <.^|全体 <.^|ファイル名変更・書式統一（格納先・説明・変更履歴）
+|===
+
+== 概要
+
+本書は MONEYBOOK（家計簿アプリ kakeibo-app）全体で使用する共通ユーティリティの仕様を記載します。 +
+XSS 対策・入力バリデーション・ストレージ管理を対象とします。
+
+---
+
+== 1. escapeHtml 関数
+
+=== 格納先
+
+`src/utils/xss.js`
+
+=== 説明
+
+DOM への文字列反映前に HTML 特殊文字をエスケープし、XSS 攻撃を防ぐ。 +
+クラスではなく単体の名前付き関数として定義する。
+
+=== シグネチャ
+
+[source,javascript]
+----
+export function escapeHtml(str)
+----
+
+[cols="2,2,4", options="header"]
+|===
+^.^|項目 ^.^|型 <.^|内容
+
+<.^|引数 `str` |any |任意の値。非文字列の場合は空文字を返す。
+<.^|戻り値 |string |HTML 特殊文字をエンティティに置換した文字列
+|===
+
+.変換表
+[cols="1,1", options="header"]
+|===
+|入力文字|変換後エンティティ
+|`&`|`&amp;`
+|`<`|`&lt;`
+|`>`|`&gt;`
+|`"`|`&quot;`
+|`'`|`&#039;`
+|===
+
+*実装方針:*
+
+- 各文字を個別に `replace` でチェーン置換する
+- `typeof str !== 'string'` の場合は即座に空文字を返す
+
+---
+
+== 2. validateRecord 関数
+
+=== 格納先
+
+`src/utils/validator.js`
+
+=== 説明
+
+収支レコード 1 件の入力値を検証し、エラーコードの配列を返す。
+
+=== シグネチャ
+
+[source,javascript]
+----
+export function validateRecord({ date, type, category, amount })
+----
+
+[cols="2,2,4", options="header"]
+|===
+^.^|項目 ^.^|型 <.^|内容
+
+<.^|引数 `date` |string |日付文字列。`YYYY-MM-DD` 形式であること
+<.^|引数 `type` |string |種別。`RECORD_TYPES` 定数の値（`income` / `expense`）であること
+<.^|引数 `category` |string |カテゴリ。`INCOME_CATEGORIES` または `EXPENSE_CATEGORIES` に含まれること
+<.^|引数 `amount` |number\|string |金額。正の整数であること
+<.^|戻り値 |string[] |エラーコード文字列の配列。全て正常な場合は空配列
+|===
+
+.検証ルール
+[cols="1,2,2", options="header"]
+|===
+^.^|フィールド ^.^|判定条件 ^.^|エラーコード（ERROR_CODES）
+
+|`date` |`/^\d{4}-\d{2}-\d{2}$/` に一致すること |`INVALID_DATE`
+|`type` |`Object.values(RECORD_TYPES)` に含まれること |`INVALID_TYPE`
+|`category` |`INCOME_CATEGORIES + EXPENSE_CATEGORIES` に含まれること |`MISSING_CATEGORY`
+|`amount` |正の整数（`num > 0 && Number.isInteger(num)`）であること |`INVALID_AMOUNT`
+|===
+
+---
+
+== 3. validateBudget 関数
+
+=== 格納先
+
+`src/utils/validator.js`
+
+=== 説明
+
+予算設定 1 件の入力値を検証し、エラーコードの配列を返す。 +
+`validateRecord` との違いとして、`limit` は 0 を許可する（「予算なし」を表すため）。
+
+=== シグネチャ
+
+[source,javascript]
+----
+export function validateBudget({ category, limit })
+----
+
+[cols="2,2,4", options="header"]
+|===
+^.^|項目 ^.^|型 <.^|内容
+
+<.^|引数 `category` |string |カテゴリ。全カテゴリ（収入+支出）に含まれること
+<.^|引数 `limit` |number\|string |予算上限金額。0 以上の整数であること
+<.^|戻り値 |string[] |エラーコード文字列の配列。全て正常な場合は空配列
+|===
+
+.検証ルール
+[cols="1,2,2", options="header"]
+|===
+^.^|フィールド ^.^|判定条件 ^.^|エラーコード（ERROR_CODES）
+
+|`category` |`INCOME_CATEGORIES + EXPENSE_CATEGORIES` に含まれること |`MISSING_CATEGORY`
+|`limit` |0 以上の整数（`num >= 0 && Number.isInteger(num)`）であること |`INVALID_AMOUNT`
+|===
+
+---
+
+== 4. StorageManager クラス
+
+=== 格納先
+
+`src/managers/storage-manager.js`
+
+=== 説明
+
+localStorage への収支レコード・予算データの読み書きを一元管理する。
+
+=== メソッド
+
+[cols="2,4", options="header"]
+|===
+^.^|メソッド <.^|説明
+
+|`getRecords()` |`moneybook_records` キーから収支レコード配列を取得する。データが存在しない場合は空配列を返す
+|`saveRecords(records)` |収支レコード配列を `moneybook_records` キーに保存する
+|`getBudgets()` |`moneybook_budgets` キーから予算オブジェクトを取得する。データが存在しない場合は空オブジェクトを返す
+|`saveBudgets(budgets)` |予算オブジェクトを `moneybook_budgets` キーに保存する
+|===
+
+---
+
+== 5. 使用上の共通ルール
+
+. 画面表示する全文字列は `escapeHtml()` を通してから DOM に反映する
+. フォーム送信時に `validateRecord()` / `validateBudget()` を呼び出し、エラーがある場合は処理を中止する
+. localStorage の読み書きは必ず `StorageManager` クラス経由で行い、他所で直接操作しない
