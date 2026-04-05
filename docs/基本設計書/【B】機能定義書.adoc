@@ -2,6 +2,17 @@
 :toc: left
 :toclevels: 3
 :source-highlighter: highlight.js
+:revdate: 2026-04-05
+
+== 変更履歴
+
+[cols="1,2,3,3,3,3", options="header", align="center"]
+|===
+^.^|No. ^.^|版数 ^.^|変更者 <.^|作成日/変更日 <.^|変更箇所 <.^|変更内容
+
+^.^|1 |1.00 |Takumi Harada |2026/4/5 <.^|- <.^|新規作成
+^.^|2 |1.01 |Takumi Harada |2026/4/5 <.^|モジュール構成表 <.^|【定数】【コード定義】【共通処理】タグを担当責務列に追記
+|===
 
 == 概要
 
@@ -23,9 +34,14 @@ MoneyBook は収支記録・月次サマリー・チャート表示・CSV エク
 | `src/ui/header.js` | `renderHeader()` | ヘッダー HTML テンプレート
 | `src/ui/footer.js` | `renderFooter()` | フッター HTML テンプレート
 | `src/ui/components.js` | `renderRecordItem()` / `renderCategoryOptions()` | 記録カード・カテゴリ選択肢 HTML テンプレート
-| `src/utils/validator.js` | `validateRecord()` / `validateBudget()` | バリデーション
-| `src/utils/xss.js` | `escapeHtml()` | XSS フィルタリング
+| `src/utils/validator.js` | `validateRecord()` / `validateBudget()` | バリデーション +
+【共通処理】validateRecord / validateBudget
+| `src/utils/xss.js` | `escapeHtml()` | XSS フィルタリング +
+【共通処理】escapeHtml
 | `src/utils/formatter.js` | `formatCurrency()` 他 | 通貨・日付フォーマット
+| `src/utils/constants.js` | 定数定義 | ストレージキー・エラーコード・カテゴリ・モーダルコードの定数 +
+【定数】収入カテゴリ一覧 / 支出カテゴリ一覧 / 収支レコードストレージキー / 予算設定ストレージキー / CSVエクスポートヘッダー / 収入種別コード / 支出種別コード / モーダル非表示コード / 追加モーダルコード / 編集モーダルコード / 金額不正エラーコード / 日付不正エラーコード / カテゴリ未選択エラーコード / 種別不正エラーコード +
+【コード定義】収入 / 支出
 |===
 
 == KakeiboEngine
