@@ -1,0 +1,75 @@
+= MONEYBOOK（家計簿アプリ）: テーブル定義書 — moneybook_budgets
+:lang: ja
+:doctype: book
+:toc: left
+:toclevels: 5
+:toc-title: 目次
+:sectnums:
+:sectnumlevels: 5
+:sectlinks:
+:imagesdir: ./images
+:icons: font
+:source-highlighter: coderay
+:example-caption: 例
+:table-caption: 表
+:figure-caption: 図
+
+[#変更履歴, title="変更履歴", cols="1,2,3,3,3,3", options="header", align="center"]
+|===
+^.^|No. ^.^|版数 ^.^|変更者 <.^|作成日/変更日 <.^|変更箇所 <.^|変更内容
+
+^.^|{counter:変更履歴} |1.00 |Takumi Harada |2026/4/6 <.^|- |新規作成
+|===
+
+== テーブル基本情報
+
+[#テーブル基本情報, title="テーブル基本情報", cols="2,5", options="header", align="center"]
+|===
+^.^|項目 ^.^|内容
+
+<.^|テーブルID（物理名） <.^|moneybook_budgets
+<.^|テーブル名（論理名） <.^|予算設定テーブル
+<.^|保存先 <.^|localStorage
+<.^|保存形式 <.^|JSON オブジェクト（`{ [カテゴリ名: string]: number }`）
+<.^|保存キー <.^|`moneybook_budgets`
+<.^|用途 <.^|カテゴリ別の月次予算上限額を保持する。サマリー画面での予算超過判定に使用する
+<.^|主な操作クラス <.^|`StorageManager`（`getBudgets` / `saveBudgets`）
+|===
+
+== データ構造
+
+本テーブルは行列構造を持たない **Key-Value オブジェクト形式** で保存される。
+
+[#データ構造, title="データ構造", cols="2,2,2,1,4", options="header", align="center"]
+|===
+^.^|フィールド ^.^|キー型 ^.^|値型 ^.^|必須 ^.^|備考
+
+<.^|カテゴリ別予算設定 <.^|string（カテゴリ名） <.^|number <.^|- <.^|`INCOME_CATEGORIES` または `EXPENSE_CATEGORIES` に含まれるカテゴリ名をキーとする。予算未設定のカテゴリはキー自体が存在しない。初期値は `{}`（全カテゴリ未設定）
+|===
+
+== バリデーション制約
+
+`validateBudget({ category, limit })` で検証する。
+
+[#バリデーション制約, title="バリデーション制約", cols="2,3,3,4", options="header", align="center"]
+|===
+^.^|フィールド ^.^|制約種別 ^.^|制約内容 ^.^|エラーコード
+
+<.^|category（キー） <.^|列挙値チェック <.^|`INCOME_CATEGORIES` + `EXPENSE_CATEGORIES` の結合リストに含まれること <.^|`ERROR_CODES.MISSING_CATEGORY`
+<.^|limit（値） <.^|数値チェック <.^|NaN でなく、0以上の整数であること（0は予算未設定と同義） <.^|`ERROR_CODES.INVALID_AMOUNT`
+|===
+
+== データサンプル
+
+[source,json]
+----
+{
+  "食費": 30000,
+  "交通費": 15000,
+  "光熱費": 10000,
+  "通信費": 5000,
+  "娯楽": 20000
+}
+----
+
+NOTE: 未設定カテゴリのキーは存在しない。`getBudgets()` は `{}` をフォールバック値とするため、キー未存在の場合 `undefined` が返る点に注意すること。
