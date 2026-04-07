@@ -2,7 +2,7 @@
 param()
 $ErrorActionPreference = 'Stop'
 
-$outPath = "c:\テスト\kakeibo-app\docs\テスト仕様書.xlsx"
+$outPath = "c:\テスト\kakeibo-app\docs\テスト仕様書\テスト仕様書.xlsx"
 
 $rows = @(
   # No, テスト種別, テスト項目, 操作手順, 確認内容, 期待される挙動, 優先度
