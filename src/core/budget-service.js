@@ -37,13 +37,6 @@ export class BudgetService {
     this.storage.saveRecords(records);
     return record.id;
   }
-      memo:      data.memo || '',
-      createdAt: new Date().toISOString(),
-    };
-    records.push(record);
-    this.storage.saveRecords(records);
-    return record.id;
-  }
 
   // 指定 ID のレコードを更新する
   updateRecord(id, data) {
