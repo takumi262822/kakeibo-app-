@@ -113,7 +113,6 @@ export class KakeiboEngine {
     // レコードが0件の場合は空状態メッセージを表示して早期リターンする
     if (records.length === 0) {
       list.innerHTML = '';
-      list.appendChild(empty);
       empty.hidden = false;
       return;
     }
